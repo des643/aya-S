@@ -24,7 +24,7 @@
           "matches": ["https://sales.marine.sh.cn/*"]
         }
     ],
-  "permissions": ["storage", "declarativeContent"],
+  "permissions": ["storage", "nativeMessaging","declarativeContent"],
   "host_permissions": [],
   "action": {
     "default_popup": "index.html",

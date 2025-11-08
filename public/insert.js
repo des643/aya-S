@@ -37,16 +37,76 @@ void function hideLockedRowsModule() {
 
 	// 初始化：在 DOMContentLoaded 或立即运行扫描并启动 observer
 	function init() {
-		if (document.readyState === 'loading') {
-			window.addEventListener('DOMContentLoaded', () => {
-				scanAndHide()
-				mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] })
-			})
-		} else {
-			scanAndHide()
-			mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] })
-		}
-	}
+    // 根据 chrome.storage 中的 isHidden 来决定是否进行隐藏操作
+    const startObserver = () => {
+      scanAndHide();
+      mo.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    };
 
-	init()
+    // 存储当前是否应该隐藏（默认 true）
+    let shouldHide = true;
+
+    const setupWithStorage = () => {
+      try {
+        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+          chrome.storage.local.get(['isHidden'], (res) => {
+            if (res && typeof res.isHidden !== 'undefined') {
+              shouldHide = !!res.isHidden;
+            }
+            if (shouldHide) startObserver();
+          });
+
+          // 监听 storage 的变化
+          chrome.storage.onChanged.addListener((changes, area) => {
+            if (area === 'local' && changes.isHidden) {
+              shouldHide = !!changes.isHidden.newValue;
+              console.log('[insert.js] chrome.storage.onChanged isHidden ->', shouldHide);
+              if (shouldHide) {
+                scanAndHide();
+                // ensure observer is running
+                if (!mo) return;
+                // already observing in this implementation
+              } else {
+                // 如果不需要隐藏，可以暂时断开 observer
+                try {
+                  mo.disconnect();
+                } catch (e) {}
+              }
+            }
+          });
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', setupWithStorage);
+    } else {
+      setupWithStorage();
+    }
+  }
+
+  init();
+
+  // 还监听 runtime 消息，便于 popup 主动发送消息通知内容脚本
+  try {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+        if (msg && msg.type === 'isHiddenChanged') {
+          console.log('[insert.js] runtime.onMessage isHiddenChanged ->', msg.isHidden);
+          // 根据消息值进行相应处理
+          if (msg.isHidden) scanAndHide();
+        }
+      });
+    }
+  } catch (e) {
+    // ignore
+  }
+
 	}();
