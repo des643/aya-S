@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@": ["src"]
+    }
+  },
+  "include": ["src/**/*", "vite.background.config.js"],
+  "exclude": ["node_modules", "dist"]
+}

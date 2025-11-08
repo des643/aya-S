@@ -1,0 +1,116 @@
+// The new CSS reset - version 1.11.3 (last updated 25.08.2024)
+// GitHub page: https://github.com/elad2412/the-new-css-reset
+
+// Variables
+$box-sizing-default: border-box;
+$size-full: 100%;
+$revert-value: revert;
+$unset-value: unset;
+
+// Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
+// - The "symbol *" part is to solve Firefox SVG sprite bug
+// - The "html" element is excluded, otherwise a bug in Chrome breaks the CSS hyphens property
+*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
+  all: $unset-value;
+  display: $revert-value;
+}
+
+// Global box-sizing
+*,
+*::before,
+*::after {
+  box-sizing: $box-sizing-default;
+}
+
+// Fix mobile Safari increase font-size on landscape mode
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+// Reapply the pointer cursor for anchor tags
+a,
+button {
+  cursor: $revert-value;
+}
+
+// List styles
+ol,
+ul,
+menu,
+summary {
+  list-style: none;
+}
+
+// Firefox nested ordered lists fix
+ol {
+  counter-reset: $revert-value;
+}
+
+// Responsive images
+img {
+  max-inline-size: $size-full;
+  max-block-size: $size-full;
+}
+
+// Table spacing
+table {
+  border-collapse: collapse;
+}
+
+// Form elements
+input,
+textarea {
+  -webkit-user-select: auto;
+}
+
+textarea {
+  white-space: $revert-value;
+}
+
+meter {
+  -webkit-appearance: $revert-value;
+  appearance: $revert-value;
+}
+
+// Preformatted text
+:where(pre) {
+  all: $revert-value;
+  box-sizing: $box-sizing-default;
+}
+
+// Placeholder
+::placeholder {
+  color: $unset-value;
+}
+
+// Hidden attribute
+:where([hidden]) {
+  display: none;
+}
+
+// Content editable
+:where([contenteditable]:not([contenteditable='false'])) {
+  -moz-user-modify: read-write;
+  -webkit-user-modify: read-write;
+  overflow-wrap: break-word;
+  -webkit-line-break: after-white-space;
+  -webkit-user-select: auto;
+}
+
+// Draggable elements
+:where([draggable='true']) {
+  -webkit-user-drag: element;
+}
+
+// Modal
+:where(dialog:modal) {
+  all: $revert-value;
+  box-sizing: $box-sizing-default;
+}
+
+// Details marker
+::-webkit-details-marker {
+  display: none;
+}
