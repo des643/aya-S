@@ -1,1 +1,0 @@
-"use strict";chrome.runtime.onInstalled.addListener(function(){chrome.action.disable(),chrome.declarativeContent.onPageChanged.removeRules(void 0,()=>{const e=[{conditions:[new chrome.declarativeContent.PageStateMatcher({pageUrl:{hostEquals:"element-plus.org"}})],actions:[new chrome.declarativeContent.ShowAction]}];chrome.declarativeContent.onPageChanged.addRules(e)})});
